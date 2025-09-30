@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\picas\\source\\repos\\BasicGame\\BasicGameService\\BasicGameService\\BasicGameService.csproj": {}
+    "H:\\GithubProjects\\Basic Game\\BasicGame\\BasicGameService\\BasicGameService\\BasicGameService.csproj": {}
   },
   "projects": {
-    "C:\\Users\\picas\\source\\repos\\BasicGame\\BasicGameService\\BasicGameService\\BasicGameService.csproj": {
+    "H:\\GithubProjects\\Basic Game\\BasicGame\\BasicGameService\\BasicGameService\\BasicGameService.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\picas\\source\\repos\\BasicGame\\BasicGameService\\BasicGameService\\BasicGameService.csproj",
+        "projectUniqueName": "H:\\GithubProjects\\Basic Game\\BasicGame\\BasicGameService\\BasicGameService\\BasicGameService.csproj",
         "projectName": "BasicGameService",
-        "projectPath": "C:\\Users\\picas\\source\\repos\\BasicGame\\BasicGameService\\BasicGameService\\BasicGameService.csproj",
+        "projectPath": "H:\\GithubProjects\\Basic Game\\BasicGame\\BasicGameService\\BasicGameService\\BasicGameService.csproj",
         "packagesPath": "C:\\Users\\picas\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\picas\\source\\repos\\BasicGame\\BasicGameService\\BasicGameService\\obj\\",
+        "outputPath": "H:\\GithubProjects\\Basic Game\\BasicGame\\BasicGameService\\BasicGameService\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
