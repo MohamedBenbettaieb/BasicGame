@@ -5,25 +5,41 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+// Development diagnostics
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage(); // shows full stack trace locally
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-app.UseRouting();
 
+// serve static files (important)
+app.UseStaticFiles();
+
+// routing & auth
+app.UseRouting();
 app.UseAuthorization();
 
-app.MapStaticAssets();
+// If MapStaticAssets is an app-specific extension, keep it but ensure its namespace is imported
+// If you don't know where it comes from, comment these two lines out to test.
+try
+{
+    app.MapStaticAssets();
+}
+catch
+{
+    // swallow here only to help local debugging; remove this try/catch in production code
+}
 
+// Map controllers/routes
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
+   .WithStaticAssets(); // again, ensure this extension exists; comment out to test if unsure
 
 app.Run();

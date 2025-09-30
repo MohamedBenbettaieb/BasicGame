@@ -1,0 +1,48 @@
+﻿@model BasicGameService.Models.Stats.StatisticsViewModel
+@{
+    ViewData["Title"] = "Statistics";
+}
+
+<h1>Usage Statistics</h1>
+
+<h2>Devices</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Device</th>
+            <th>Times Used</th>
+            <th>Total Time (minutes)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var d in Model.DeviceStats)
+        {
+            <tr>
+                <td>@d.DeviceName</td>
+                <td>@d.TimesUsed</td>
+                <td>@Math.Round(d.TotalTimeMinutes, 1)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2>Games</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Game</th>
+            <th>Times Played</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var g in Model.GameStats)
+        {
+            <tr>
+                <td>@g.GameName</td>
+                <td>@g.TimesPlayed</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Index" class="btn btn-secondary">Back to Dashboard</a>

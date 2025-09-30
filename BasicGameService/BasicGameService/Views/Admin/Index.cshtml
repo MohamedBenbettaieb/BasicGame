@@ -1,0 +1,55 @@
+﻿@model List<BasicGameService.Models.Device>
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h1>Admin Dashboard</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Device</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Current Session</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var device in Model)
+        {
+            <tr>
+                <td>@device.Name</td>
+                <td>@device.Type</td>
+                <td>@(device.IsAvailable ? "Available" : "In Use")</td>
+                <td>@(device.CurrentSession?.PlayerName ?? "-")</td>
+                <td>
+                    @if (device.IsAvailable)
+                    {
+                        <form asp-action="StartSession" method="post" style="display:inline">
+                            <input type="hidden" name="deviceId" value="@device.Id" />
+                            <input type="text" name="playerName" placeholder="Player Name" required />
+                            <select name="gameId">
+                                <option value="">No Game</option>
+                                @foreach (var game in BasicGameService.Models.Database.Games)
+                                {
+                                    <option value="@game.Id">@game.Name</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-success">Start</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="EndSession" method="post" style="display:inline">
+                            <input type="hidden" name="sessionId" value="@device.CurrentSession?.Id" />
+                            <button type="submit" class="btn btn-danger">End</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Statistics" class="btn btn-primary">View Statistics</a>
