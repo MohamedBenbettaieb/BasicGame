@@ -1,0 +1,32 @@
+﻿@model BasicGameService.DTOs.GameUpdateDto
+
+@{
+    ViewData["Title"] = "Edit Game";
+}
+
+<h1>Edit Game</h1>
+
+<form asp-action="Edit" method="post" class="mb-3">
+    <input asp-for="Id" type="hidden" />
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="GameType" class="form-label"></label>
+        <select asp-for="GameType" class="form-select" asp-items="Html.GetEnumSelectList<BasicGameService.Models.Enums.GameType>()">
+            <option value="">-- Select Type --</option>
+        </select>
+        <span asp-validation-for="GameType" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

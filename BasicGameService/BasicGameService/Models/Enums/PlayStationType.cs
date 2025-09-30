@@ -1,4 +1,4 @@
-﻿namespace BasicGameService.Models
+﻿namespace BasicGameService.Models.Enums
 {
     /// <summary>
     /// Represents the supported PlayStation console types.

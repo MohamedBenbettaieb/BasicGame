@@ -1,4 +1,4 @@
-﻿namespace BasicGameService.Models
+﻿namespace BasicGameService.Models.Enums
 {
     public enum GameType
     {
