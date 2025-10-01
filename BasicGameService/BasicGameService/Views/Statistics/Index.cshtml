@@ -1,0 +1,120 @@
+﻿@model BasicGameService.Models.Stats.StatisticsViewModel
+
+@{
+    ViewData["Title"] = "Statistics";
+    // Prepare JSON for charts
+    var deviceLabels = System.Text.Json.JsonSerializer.Serialize(Model.DeviceStats.Select(d => d.DeviceName));
+    var deviceTimes = System.Text.Json.JsonSerializer.Serialize(Model.DeviceStats.Select(d => d.TimesUsed));
+    var deviceTotalMinutes = System.Text.Json.JsonSerializer.Serialize(Model.DeviceStats.Select(d => Math.Round(d.TotalTimeMinutes, 1)));
+
+    var gameLabels = System.Text.Json.JsonSerializer.Serialize(Model.GameStats.Select(g => g.GameName));
+    var gamePlays = System.Text.Json.JsonSerializer.Serialize(Model.GameStats.Select(g => g.TimesPlayed));
+}
+
+<h1>Usage Statistics</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <h3>Devices (times used)</h3>
+        <canvas id="devicesBarChart" width="400" height="300"></canvas>
+        <p class="small text-muted mt-2">Bar chart of how many times each device was used.</p>
+    </div>
+    <div class="col-md-6">
+        <h3>Games (times played)</h3>
+        <canvas id="gamesPieChart" width="300" height="300"></canvas>
+        <p class="small text-muted mt-2">Pie chart of game popularity.</p>
+    </div>
+</div>
+
+<hr />
+
+<h2>Devices</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Device</th>
+            <th>Times Used</th>
+            <th>Total Time (min)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var d in Model.DeviceStats)
+        {
+            <tr>
+                <td>@d.DeviceName</td>
+                <td>@d.TimesUsed</td>
+                <td>@Math.Round(d.TotalTimeMinutes, 1)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2>Games</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Game</th>
+            <th>Times Played</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var g in Model.GameStats)
+        {
+            <tr>
+                <td>@g.GameName</td>
+                <td>@g.TimesPlayed</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-controller="Admin" asp-action="Index" class="btn btn-secondary">Back to Dashboard</a>
+
+@section Scripts {
+    <!-- Chart.js CDN (simple, OK for dev) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Parse data produced server-side
+        const deviceLabels = @Html.Raw(deviceLabels);
+        const deviceTimes = @Html.Raw(deviceTimes);
+        const deviceTotalMinutes = @Html.Raw(deviceTotalMinutes);
+
+        const gameLabels = @Html.Raw(gameLabels);
+        const gamePlays = @Html.Raw(gamePlays);
+
+        // Devices bar chart (times used)
+        const ctxDevices = document.getElementById('devicesBarChart').getContext('2d');
+        new Chart(ctxDevices, {
+            type: 'bar',
+            data: {
+                labels: deviceLabels,
+                datasets: [{
+                    label: 'Times Used',
+                    data: deviceTimes,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Games pie chart
+        const ctxGames = document.getElementById('gamesPieChart').getContext('2d');
+        new Chart(ctxGames, {
+            type: 'pie',
+            data: {
+                labels: gameLabels,
+                datasets: [{
+                    data: gamePlays
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    </script>
+}

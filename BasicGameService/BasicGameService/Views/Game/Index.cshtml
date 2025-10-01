@@ -1,0 +1,34 @@
+﻿@model List<BasicGameService.Models.Game>
+
+@{
+    ViewData["Title"] = "Games";
+}
+
+<h1>Games</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Genre</th>
+            <th>Release Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var game in Model)
+        {
+            <tr>
+                <td>@game.Name</td>
+                <td>@game.gameType</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@game.Id" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Edit" asp-route-id="@game.Id" class="btn btn-sm btn-primary">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@game.Id" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create" class="btn btn-success">Add New Game</a>

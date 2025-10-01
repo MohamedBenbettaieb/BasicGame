@@ -1,92 +1,78 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BasicGameService.Data;
 using BasicGameService.Models;
-using BasicGameService.Models.Stats;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace BasicGame.Controllers
+namespace BasicGameService.Controllers
 {
     public class AdminController : Controller
     {
-        // Dashboard: show all devices
-        public IActionResult Index()
+        private readonly AppDbContext _db;
+
+        public AdminController(AppDbContext db)
         {
-            var devices = Database.Devices;
+            _db = db;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var devices = await _db.Devices
+                .Include(d => d.CurrentSession)
+                .Include(d => d.InstalledGames)
+                .ToListAsync();
+
+            var games = await _db.Games.ToListAsync();
+            ViewBag.AllGames = games;
+
             return View(devices);
         }
 
         // Start session
         [HttpPost]
-        public IActionResult StartSession(int deviceId, int? gameId, string playerName)
+        public async Task<IActionResult> StartSession(int deviceId, int? gameId, string playerName)
         {
-            var device = Database.Devices.FirstOrDefault(d => d.Id == deviceId);
+            var device = await _db.Devices.FindAsync(deviceId);
             if (device == null || !device.IsAvailable)
                 return BadRequest("Device not available");
 
             var session = new Session
             {
-                Id = Database.Sessions.Count + 1,
                 DeviceId = deviceId,
                 GameId = gameId,
                 PlayerName = playerName,
                 StartTime = DateTime.Now
             };
 
-            Database.Sessions.Add(session);
-            device.CurrentSession = session;
+            _db.Sessions.Add(session);
+
+            device.CurrentSession = session; // optional, tracked automatically
             device.IsAvailable = false;
 
-            return RedirectToAction("Index");
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // End session
         [HttpPost]
-        public IActionResult EndSession(int sessionId)
+        public async Task<IActionResult> EndSession(int sessionId)
         {
-            var session = Database.Sessions.FirstOrDefault(s => s.Id == sessionId);
+            var session = await _db.Sessions.FindAsync(sessionId);
             if (session == null || session.EndTime != null)
                 return BadRequest("Invalid session");
 
             session.EndTime = DateTime.Now;
-            var device = Database.Devices.FirstOrDefault(d => d.Id == session.DeviceId);
+
+            var device = await _db.Devices.FindAsync(session.DeviceId);
             if (device != null)
             {
                 device.IsAvailable = true;
                 device.CurrentSession = null;
             }
 
-            return RedirectToAction("Index");
-        }
-
-        // Statistics page
-        public IActionResult Statistics()
-        {
-            var devices = Database.Devices ?? new List<Device>();
-            var games = Database.Games ?? new List<Game>();
-            var sessions = Database.Sessions ?? new List<Session>();
-
-            var deviceStats = devices.Select(d => new DeviceStat
-            {
-                DeviceId = d.Id,
-                DeviceName = d.Name,
-                TimesUsed = sessions.Count(s => s.DeviceId == d.Id),
-                TotalTimeMinutes = sessions
-                    .Where(s => s.DeviceId == d.Id && s.EndTime.HasValue)
-                    .Sum(s => (s.EndTime.Value - s.StartTime).TotalMinutes)
-            }).ToList();
-
-            var gameStats = games.Select(g => new GameStat
-            {
-                GameId = g.Id,
-                GameName = g.Name,
-                TimesPlayed = sessions.Count(s => s.GameId == g.Id)
-            }).ToList();
-
-            var vm = new StatisticsViewModel
-            {
-                DeviceStats = deviceStats,
-                GameStats = gameStats
-            };
-
-            return View(vm);
+            await _db.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
     }
+
 }

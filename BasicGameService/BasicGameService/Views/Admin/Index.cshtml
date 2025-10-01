@@ -31,7 +31,7 @@
                             <input type="text" name="playerName" placeholder="Player Name" required />
                             <select name="gameId">
                                 <option value="">No Game</option>
-                                @foreach (var game in BasicGameService.Models.Database.Games)
+                                @foreach (var game in ViewBag.AllGames as List<BasicGameService.Models.Game>)
                                 {
                                     <option value="@game.Id">@game.Name</option>
                                 }

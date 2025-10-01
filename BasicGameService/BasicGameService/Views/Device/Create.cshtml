@@ -1,0 +1,47 @@
+﻿@model BasicGameService.DTOs.DeviceCreateDto
+
+@{
+    ViewData["Title"] = "Add New Device";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Type" class="form-label"></label>
+        <select asp-for="Type" class="form-select" asp-items="Html.GetEnumSelectList<BasicGameService.Models.Enums.PlayStationType>()">
+            <option value="">-- Select Type --</option>
+        </select>
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Installed Games (optional)</label>
+        <select asp-for="InstalledGameIds" class="form-select" multiple>
+            @* You will populate this list in the controller via ViewBag or ViewData *@
+            @foreach (var game in ViewBag.AllGames as List<BasicGameService.Models.Game>)
+            {
+                <option value="@game.Id">@game.Name</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Device</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

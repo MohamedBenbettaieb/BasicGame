@@ -1,4 +1,6 @@
-﻿namespace BasicGameService.Models
+﻿using BasicGameService.Models.Enums;
+
+namespace BasicGameService.Models
 {
     public class Game
     {
