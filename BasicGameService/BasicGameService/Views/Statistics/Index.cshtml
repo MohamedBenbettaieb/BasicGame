@@ -1,12 +1,10 @@
 ﻿@model BasicGameService.Models.Stats.StatisticsViewModel
-
 @{
     ViewData["Title"] = "Statistics";
     // Prepare JSON for charts
     var deviceLabels = System.Text.Json.JsonSerializer.Serialize(Model.DeviceStats.Select(d => d.DeviceName));
     var deviceTimes = System.Text.Json.JsonSerializer.Serialize(Model.DeviceStats.Select(d => d.TimesUsed));
     var deviceTotalMinutes = System.Text.Json.JsonSerializer.Serialize(Model.DeviceStats.Select(d => Math.Round(d.TotalTimeMinutes, 1)));
-
     var gameLabels = System.Text.Json.JsonSerializer.Serialize(Model.GameStats.Select(g => g.GameName));
     var gamePlays = System.Text.Json.JsonSerializer.Serialize(Model.GameStats.Select(g => g.TimesPlayed));
 }
@@ -16,12 +14,16 @@
 <div class="row">
     <div class="col-md-6">
         <h3>Devices (times used)</h3>
-        <canvas id="devicesBarChart" width="400" height="300"></canvas>
+        <div style="position: relative; height: 300px;">
+            <canvas id="devicesBarChart"></canvas>
+        </div>
         <p class="small text-muted mt-2">Bar chart of how many times each device was used.</p>
     </div>
     <div class="col-md-6">
         <h3>Games (times played)</h3>
-        <canvas id="gamesPieChart" width="300" height="300"></canvas>
+        <div style="position: relative; height: 300px;">
+            <canvas id="gamesPieChart"></canvas>
+        </div>
         <p class="small text-muted mt-2">Pie chart of game popularity.</p>
     </div>
 </div>
@@ -71,19 +73,15 @@
 <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary">Back to Dashboard</a>
 
 @section Scripts {
-    <!-- Chart.js CDN (simple, OK for dev) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <script>
-        // Parse data produced server-side
         const deviceLabels = @Html.Raw(deviceLabels);
         const deviceTimes = @Html.Raw(deviceTimes);
         const deviceTotalMinutes = @Html.Raw(deviceTotalMinutes);
-
         const gameLabels = @Html.Raw(gameLabels);
         const gamePlays = @Html.Raw(gamePlays);
 
-        // Devices bar chart (times used)
+        // Devices bar chart
         const ctxDevices = document.getElementById('devicesBarChart').getContext('2d');
         new Chart(ctxDevices, {
             type: 'bar',
@@ -92,12 +90,19 @@
                 datasets: [{
                     label: 'Times Used',
                     data: deviceTimes,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
             }
         });
 
@@ -108,7 +113,16 @@
             data: {
                 labels: gameLabels,
                 datasets: [{
-                    data: gamePlays
+                    data: gamePlays,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.5)',
+                        'rgba(54, 162, 235, 0.5)',
+                        'rgba(255, 206, 86, 0.5)',
+                        'rgba(75, 192, 192, 0.5)',
+                        'rgba(153, 102, 255, 0.5)',
+                        'rgba(255, 159, 64, 0.5)'
+                    ],
+                    borderWidth: 1
                 }]
             },
             options: {
