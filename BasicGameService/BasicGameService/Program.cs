@@ -3,30 +3,39 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-
-// Register AppDbContext with SQL Server
+builder.Services.AddControllers(); // add controllers for API endpoints
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Allow React dev server origin (adjust port if you use another)
+var corsPolicyName = "AllowClientDev";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(corsPolicyName, policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+// keep existing MVC if you still use Razor views
+builder.Services.AddControllersWithViews();
+
 var app = builder.Build();
 
-// Configure HTTP request pipeline
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-}
-
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // <<< this is required!
+app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseCors(corsPolicyName); // enable CORS before endpoints
+
 app.UseAuthorization();
 
+app.MapControllers(); // map API controllers
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Admin}/{action=Index}/{id?}");
 
 app.Run();
