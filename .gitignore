@@ -4,8 +4,11 @@
 
 /BasicGameService/.vs/BasicGameService/FileContentIndex
 # Build results
-bin/
-obj/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
 
 # User-specific files
 *.user
@@ -15,6 +18,13 @@ obj/
 
 # VS Code
 .vscode/
+
+**/AssemblyInfo.cs
+**/AssemblyAttributes.cs
+*.cache
+**/*.AssemblyInfo.cs
+**/*.AssemblyInfoInputs.cache
+
 
 # Visual Studio
 .vs/
