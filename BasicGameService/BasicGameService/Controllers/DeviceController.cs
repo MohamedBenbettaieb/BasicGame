@@ -172,5 +172,42 @@ namespace BasicGame.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+        // GET: /Device/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var device = await _db.Devices.FindAsync(id.Value);
+            if (device == null) return NotFound();
+
+            return View(device); 
+        }
+
+        // POST: /Device/DeleteConfirmed
+        [HttpPost, ActionName("DeleteConfirmed")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var device = await _db.Devices.FindAsync(id);
+            if (device == null) return NotFound();
+
+        
+            var hasActiveSession = await _db.Sessions
+                .AnyAsync(s => s.DeviceId == id && s.EndTime == null);
+
+            if (hasActiveSession)
+            {
+                ModelState.AddModelError("", "Cannot delete this device because it has an active session.");
+                return View("Delete", device);
+            }
+
+            _db.Devices.Remove(device);
+            await _db.SaveChangesAsync();
+
+            TempData["Message"] = $"Device '{device.Name}' deleted successfully!";
+            return RedirectToAction(nameof(Index));
+        }
+
+
     }
 }

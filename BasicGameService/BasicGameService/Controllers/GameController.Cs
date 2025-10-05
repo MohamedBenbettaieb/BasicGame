@@ -122,13 +122,15 @@ namespace BasicGame.Controllers
             var relatedSessions = await _db.Sessions.AnyAsync(s => s.GameId == id);
             if (relatedSessions)
             {
-                ModelState.AddModelError("", "Cannot delete game because it is referenced by sessions.");
-                return View(game);
+                ModelState.AddModelError("", "Cannot delete this game because it is referenced by existing sessions");
+                return View("Delete", game);
             }
 
             _db.Games.Remove(game);
             await _db.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return RedirectToAction(nameof(Index)); 
         }
+
     }
 }
