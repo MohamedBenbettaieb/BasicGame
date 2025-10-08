@@ -67,3 +67,11 @@ publish/
 *.db
 *.sqlite
 .env
+# Fichiers temporaires .NET
+**/obj/
+**/bin/
+*.cache
+bin/
+obj/
+*.cache
+*.log
