@@ -31,6 +31,7 @@ namespace BasicGameService.Data
                 .WithMany()
                 .HasForeignKey(s => s.GameId)
                 .IsRequired(false);
+                
         }
     }
 }
