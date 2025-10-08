@@ -71,3 +71,7 @@ publish/
 **/obj/
 **/bin/
 *.cache
+bin/
+obj/
+*.cache
+*.log
