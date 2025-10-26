@@ -75,3 +75,5 @@ bin/
 obj/
 *.cache
 *.log
+/BasicGameService/BasicGameService/obj/Debug/net9.0/BasicGameService.AssemblyInfo.cs
+/.gitignore

@@ -1,18 +1,17 @@
-﻿@model List<BasicGameService.Models.Device>
-@{
-    ViewData["Title"] = "Admin Dashboard";
-}
+﻿@model IEnumerable<BasicGameService.Models.Device>
 
-<h1>Admin Dashboard</h1>
+<h2 class="text-center mb-4">Admin Dashboard</h2>
 
-<table class="table">
-    <thead>
+<table class="table table-hover align-middle text-center">
+    <thead class="table-light">
         <tr>
             <th>Device</th>
             <th>Type</th>
             <th>Status</th>
-            <th>Current Session</th>
-            <th>Actions</th>
+            <th>Player</th>
+            <th>Game</th>
+            <th>Duration</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -21,34 +20,94 @@
             <tr>
                 <td>@device.Name</td>
                 <td>@device.Type</td>
-                <td>@(device.IsAvailable ? "Available" : "In Use")</td>
-                <td>@(device.CurrentSession?.PlayerName ?? "-")</td>
+
                 <td>
                     @if (device.IsAvailable)
                     {
-                        <form asp-action="StartSession" method="post" style="display:inline">
-                            <input type="hidden" name="deviceId" value="@device.Id" />
-                            <input type="text" name="playerName" placeholder="Player Name" required />
-                            <select name="gameId">
-                                <option value="">No Game</option>
-                                @foreach (var game in ViewBag.AllGames as List<BasicGameService.Models.Game>)
-                                {
-                                    <option value="@game.Id">@game.Name</option>
-                                }
-                            </select>
-                            <button type="submit" class="btn btn-success">Start</button>
-                        </form>
+                        <span class="badge bg-success">Available</span>
                     }
                     else
                     {
-                        <form asp-action="EndSession" method="post" style="display:inline">
-                            <input type="hidden" name="sessionId" value="@device.CurrentSession?.Id" />
-                            <button type="submit" class="btn btn-danger">End</button>
-                        </form>
+                        <span class="badge bg-warning text-dark">In Use</span>
                     }
                 </td>
+
+                @if (device.IsAvailable)
+                {
+
+                    <form asp-action="StartSession" method="post">
+                        <input type="hidden" name="deviceId" value="@device.Id" />
+                    <td>
+                        <input type="text"
+                               name="playerName"
+                               class="form-control form-control-sm"
+                               placeholder="Player Name"
+                               required />
+                    </td>
+                    <td>
+                        <select name="gameId" class="form-select form-select-sm">
+                            <option value="">No Game</option>
+                            @foreach (var game in ViewBag.AllGames)
+                            {
+                                <option value="@game.Id">@game.Name</option>
+                            }
+                        </select>
+                    </td>
+                    <td class="text-muted">-</td>
+                    <td>
+                        <button type="submit" class="btn btn-success btn-sm">Start</button>
+                    </td>
+                    </form>
+                }
+                else
+                {
+
+                    <td>@device.CurrentSession?.PlayerName</td>
+                    <td>@device.CurrentSession?.Game?.Name</td>
+                    <td>
+                        @if (device.CurrentSession?.StartTime != null)
+                        {
+                            <span class="duration"
+                                  data-starttime="@device.CurrentSession.StartTime.ToString("O")">
+                                00:00:00
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">-</span>
+                        }
+                    </td>
+                    <td>
+                        <form asp-action="EndSession" method="post">
+                            <input type="hidden" name="sessionId" value="@device.CurrentSession.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm">End</button>
+                        </form>
+                    </td>
+                }
             </tr>
         }
     </tbody>
 </table>
 
+@section Scripts {
+    <script>
+        function updateDurations() {
+            const elements = document.querySelectorAll('.duration');
+            elements.forEach(el => {
+                const start = new Date(el.dataset.starttime);
+                const now = new Date();
+                const diff = now - start;
+                const hours = Math.floor(diff / 3600000);
+                const minutes = Math.floor((diff % 3600000) / 60000);
+                const seconds = Math.floor((diff % 60000) / 1000);
+                el.textContent =
+                    `${hours.toString().padStart(2, '0')}:` +
+                    `${minutes.toString().padStart(2, '0')}:` +
+                    `${seconds.toString().padStart(2, '0')}`;
+            });
+        }
+
+        updateDurations();
+        setInterval(updateDurations, 1000);
+    </script>
+}
