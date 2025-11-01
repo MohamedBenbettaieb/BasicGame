@@ -17,19 +17,20 @@ namespace BasicGameService.Controllers
         public async Task<IActionResult> Index()
         {
             var devices = await _db.Devices
-                .Include(d => d.CurrentSession)
-                .Include(d => d.InstalledGames)
-                .ToListAsync();
-
+              .Include(d => d.CurrentSession)
+              .Include(d => d.InstalledGames)
+              .ToListAsync();
             var games = await _db.Games.ToListAsync();
+            var users = await _db.Users.ToListAsync();
             ViewBag.AllGames = games;
-
+            ViewBag.AllUsers = users;
             return View(devices);
+
         }
 
         // Start session
         [HttpPost]
-        public async Task<IActionResult> StartSession(int deviceId, int? gameId, string playerName)
+        public async Task<IActionResult> StartSession(int deviceId, int? gameId, int? playerId)
         {
             var device = await _db.Devices.FindAsync(deviceId);
             if (device == null || !device.IsAvailable)
@@ -39,7 +40,7 @@ namespace BasicGameService.Controllers
             {
                 DeviceId = deviceId,
                 GameId = gameId,
-                PlayerName = playerName,
+                PlayerId=playerId,
                 StartTime = DateTime.Now
             };
 
