@@ -1,9 +1,12 @@
-﻿namespace BasicGameService.Models
+﻿using System.Numerics;
+
+namespace BasicGameService.Models
 {
     public class Session
     {
         public int Id { get; set; }
-        public string PlayerName { get; set; } = string.Empty;
+        public int? PlayerId { get; set; }// FK to User
+        public User? Player { get; set; }
         public int DeviceId { get; set; } // FK to Device
         public int? GameId { get; set; } // FK to Game being played, optional
         public DateTime StartTime { get; set; }

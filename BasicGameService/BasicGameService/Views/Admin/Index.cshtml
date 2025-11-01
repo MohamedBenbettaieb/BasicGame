@@ -38,11 +38,13 @@
                     <form asp-action="StartSession" method="post">
                         <input type="hidden" name="deviceId" value="@device.Id" />
                     <td>
-                        <input type="text"
-                               name="playerName"
-                               class="form-control form-control-sm"
-                               placeholder="Player Name"
-                               required />
+                        <select name="PlayerId" class="form-select form-select-sm">
+                            <option value="">Player Name</option>
+                            @foreach (var user in ViewBag.AllUsers)
+                            {
+                                <option value="@user.Id">@user.FirstName</option>
+                            }
+                        </select>
                     </td>
                     <td>
                         <select name="gameId" class="form-select form-select-sm">
@@ -62,7 +64,7 @@
                 else
                 {
 
-                    <td>@device.CurrentSession?.PlayerName</td>
+                    <td>@device.CurrentSession?.Player?.FirstName</td>
                     <td>@device.CurrentSession?.Game?.Name</td>
                     <td>
                         @if (device.CurrentSession?.StartTime != null)

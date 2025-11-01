@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using BasicGameService.Models;
+﻿using BasicGameService.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Numerics;
 
 namespace BasicGameService.Data
 {
@@ -11,11 +12,12 @@ namespace BasicGameService.Data
         public DbSet<Game> Games { get; set; } = null!;
         public DbSet<Session> Sessions { get; set; } = null!;
         // Add Players etc. when needed
+        public DbSet<User> Users { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
+            modelBuilder.Entity<User>();
             // Optional: configure relationships
             modelBuilder.Entity<Device>()
                 .HasMany(d => d.InstalledGames)
@@ -31,7 +33,11 @@ namespace BasicGameService.Data
                 .WithMany()
                 .HasForeignKey(s => s.GameId)
                 .IsRequired(false);
-                
+            modelBuilder.Entity<Session>()
+                 .HasOne(s => s.Player)
+                 .WithMany(p => p.Sessions)
+                 .HasForeignKey(s => s.PlayerId);
+
         }
     }
 }
